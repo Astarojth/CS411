@@ -1,0 +1,105 @@
+SELECT data.GenreID, COUNT(data.QueryID) as GameCount
+FROM game_data data
+NATURAL JOIN Genres genre
+WHERE data.Price > (SELECT MAX(avgPrice) FROM (SELECT CategoryID, AVG(Price) as avgPrice FROM game_data GROUP BY CategoryID) as avgTable)
+GROUP BY data.GenreID;
+
+(SELECT Category.ID, AVG(Price) as avgprice
+FROM (game_data Natural Join Genres) join Category ON game_data.CategoryID = Category.ID
+WHERE GameName LIKE 'B%' AND GenreID>10
+GROUP BY Category.ID
+ORDER BY avgprice DESC 
+LIMIT 10)
+UNION
+(SELECT Category.ID, AVG(Price) as avgprice
+FROM (game_data Natural Join Genres) join Category ON game_data.CategoryID = Category.ID
+WHERE ID>1 AND CategorySinglePlayer=1
+GROUP BY Category.ID
+ORDER BY avgprice ASC )
+ORDER BY avgprice DESC;
+
+(SELECT DISTINCT
+    COUNT(U.UserID),
+    UserJoinYear,
+    YEAR(g.ReleaseDate) AS ReleaseYear,
+    CEIL(AVG(g.Players)) as AveragePlayers
+FROM Users U
+INNER JOIN 
+    UserGamePreference ON U.UserID = UserGamePreference.UserID
+INNER JOIN 
+    game_data g_favorite ON UserGamePreference.QueryID = g_favorite.QueryID
+INNER JOIN 
+    game_data g ON g_favorite.QueryID = g.QueryID
+WHERE 
+    YEAR(g.ReleaseDate) > 2010 
+    AND g.PlatformID = 7
+GROUP BY 
+    YEAR(g.ReleaseDate)
+HAVING 
+    AVG(g.Players) > 100000 
+ORDER BY 
+    ReleaseYear DESC, AveragePlayers DESC)
+UNION
+(SELECT DISTINCT
+    COUNT(Users.UserID),
+    UserJoinYear,
+    YEAR(g.ReleaseDate) AS ReleaseYear,
+    CEIL(AVG(g.Players)) as AveragePlayers 
+FROM Users 
+INNER JOIN 
+    UserGamePreference ON Users.UserID = UserGamePreference.UserID
+INNER JOIN 
+    game_data g_favorite ON UserGamePreference.QueryID = g_favorite.QueryID
+INNER JOIN 
+    game_data g ON g_favorite.QueryID = g.QueryID
+WHERE Users.UserJoinYear = YEAR(g.ReleaseDate)
+GROUP BY 
+    YEAR(g.ReleaseDate)
+HAVING 
+    AVG(g.Players) > 100000 
+ORDER BY 
+    ReleaseYear DESC, AveragePlayers DESC
+);
+
+(SELECT g.GenreID, COUNT(g.QueryID) AS GameCount
+FROM game_data g
+WHERE g.Price > 
+    (SELECT AVG(Price) 
+     FROM game_data)
+GROUP BY g.GenreID)
+UNION
+(SELECT YEAR(ReleaseDate) AS ReleaseYear, CEIL(AVG(Players)) AS AveragePlayers
+FROM game_data
+WHERE Players > 100000
+GROUP BY YEAR(ReleaseDate))
+ORDER BY GameCount DESC;
+
+
+(SELECT 
+    NULL AS ReleaseYear,
+    g.GenreID, 
+    c.ID AS CategoryID, 
+    COUNT(DISTINCT g.QueryID) AS GameCount, 
+    AVG(g.Price) AS AvgPrice, 
+    (SELECT AVG(Price) FROM game_data gd WHERE gd.CategoryID = c.ID) AS AvgPricePerCategory
+FROM game_data g
+JOIN Category c ON g.CategoryID = c.ID
+WHERE g.Price > (SELECT AVG(Price) FROM game_data gd WHERE gd.CategoryID = g.CategoryID)
+AND g.GenreID > 10
+GROUP BY g.GenreID, c.ID)
+UNION ALL
+(SELECT 
+    YEAR(g.ReleaseDate) AS ReleaseYear, 
+    g.GenreID, 
+    NULL AS CategoryID, 
+    COUNT(DISTINCT g.QueryID) AS GameCount, 
+    AVG(g.Price) AS AvgPrice, 
+    NULL AS AvgPricePerCategory
+FROM game_data g
+WHERE Players > (SELECT AVG(Players) * 1.5 FROM game_data WHERE PlatformID = 7)
+AND g.PlatformID = 7
+GROUP BY YEAR(g.ReleaseDate), g.GenreID)
+ORDER BY GameCount DESC;
+
+
+

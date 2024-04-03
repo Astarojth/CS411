@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Game Data Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+
+        <!-- Create Game -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Create a New Game</h2>
+                <form id="createGameForm" action="/game_data" method="post">
+                    <div class="form-group">
+                        <label for="QueryID">Query ID</label>
+                        <input type="number" class="form-control" id="QueryID" name="QueryID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ResponseID">Response ID</label>
+                        <input type="number" class="form-control" id="ResponseID" name="ResponseID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="GameName">Game Name</label>
+                        <input type="text" class="form-control" id="GameName" name="GameName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ResponseName">Response Name</label>
+                        <input type="text" class="form-control" id="ResponseName" name="ResponseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ReleaseDate">Release Date</label>
+                        <input type="text" class="form-control" id="ReleaseDate" name="ReleaseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Recommendation">Recommendation</label>
+                        <input type="number" class="form-control" id="Recommendation" name="Recommendation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Price">Price</label>
+                        <input type="text" class="form-control" id="Price" name="Price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="SupportURL">Support URL</label>
+                        <input type="text" class="form-control" id="SupportURL" name="SupportURL">
+                    </div>
+                    <div class="form-group">
+                        <label for="AboutText">About Text</label>
+                        <textarea class="form-control" id="AboutText" name="AboutText" rows="3" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="HeaderImage">Header Image URL</label>
+                        <input type="text" class="form-control" id="HeaderImage" name="HeaderImage" >
+                    </div>
+                    <div class="form-group">
+                        <label for="PlatformID">Platform ID</label>
+                        <input type="number" class="form-control" id="PlatformID" name="PlatformID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryID">Category ID</label>
+                        <input type="number" class="form-control" id="CategoryID" name="CategoryID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="GenreID">Genre ID</label>
+                        <input type="number" class="form-control" id="GenreID" name="GenreID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Players">Players</label>
+                        <input type="number" class="form-control" id="Players" name="Players" >
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Game</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Read Game -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Read All Games</h2>
+                <button onclick="getAllGames()" class="btn btn-secondary">Show All Games</button>
+                <div id="allGamesResults"></div>
+            </div>
+        </div>
+
+        <!-- Read by QueryID -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Read Game by QueryID</h2>
+                <div class="form-group">
+                    <input type="number" id="searchQueryID" class="form-control" placeholder="Enter Query ID">
+                </div>
+                <button onclick="searchGameByQueryID()" class="btn btn-primary">Search Game</button>
+                <div id="gameSearchResult"></div>
+            </div>
+        </div>
+
+        <!-- Update Game -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Update Game Information</h2>
+                <form id="updateGameForm" action="/game_data/[QUERY_ID]" method="post">
+                    <!-- This field is for identifying which game to update -->
+                    <div class="form-group">
+                        <label for="uQueryID">Query ID (ID of the game to update)</label>
+                        <input type="number" class="form-control" id="uQueryID" name="QueryID" placeholder="Enter the Game ID to Update" required>
+                    </div>
+                    <!-- Other fields for updating -->
+                    <div class="form-group">
+                        <label for="ResponseID">Response ID</label>
+                        <input type="number" class="form-control" id="ResponseID" name="ResponseID" >
+                    </div>
+                    <div class="form-group">
+                        <label for="GameName">Game Name</label>
+                        <input type="text" class="form-control" id="GameName" name="GameName" >
+                    </div>
+                    <div class="form-group">
+                        <label for="ResponseName">Response Name</label>
+                        <input type="text" class="form-control" id="ResponseName" name="ResponseName" >
+                    </div>
+                    <div class="form-group">
+                        <label for="ReleaseDate">Release Date</label>
+                        <input type="text" class="form-control" id="ReleaseDate" name="ReleaseDate" >
+                    </div>
+                    <div class="form-group">
+                        <label for="Recommendation">Recommendation</label>
+                        <input type="number" class="form-control" id="Recommendation" name="Recommendation" >
+                    </div>
+                    <div class="form-group">
+                        <label for="Price">Price</label>
+                        <input type="text" class="form-control" id="Price" name="Price" >
+                    </div>
+                    <div class="form-group">
+                        <label for="SupportURL">Support URL</label>
+                        <input type="text" class="form-control" id="SupportURL" name="SupportURL">
+                    </div>
+                    <div class="form-group">
+                        <label for="AboutText">About Text</label>
+                        <textarea class="form-control" id="AboutText" name="AboutText" rows="3" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="HeaderImage">Header Image URL</label>
+                        <input type="text" class="form-control" id="HeaderImage" name="HeaderImage" >
+                    </div>
+                    <div class="form-group">
+                        <label for="PlatformID">Platform ID</label>
+                        <input type="number" class="form-control" id="PlatformID" name="PlatformID" >
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryID">Category ID</label>
+                        <input type="number" class="form-control" id="CategoryID" name="CategoryID" >
+                    </div>
+                    <div class="form-group">
+                        <label for="GenreID">Genre ID</label>
+                        <input type="number" class="form-control" id="GenreID" name="GenreID" >
+                    </div>
+                    <div class="form-group">
+                        <label for="Players">Players</label>
+                        <input type="number" class="form-control" id="Players" name="Players" >
+                    </div>
+                    <button type="submit" class="btn btn-success">Update Game</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Game -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Delete a Game</h2>
+                <form id="deleteGameForm">
+                    <div class="form-group">
+                        <label for="deleteGameId">Game ID</label>
+                        <input type="number" class="form-control" id="deleteGameId" name="QueryID" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete Game</button>
+                </form>
+            </div>
+        </div>
+
+    <!-- Search Game by Name -->
+    <div class="card">
+        <div class="card-body">
+            <h2>Search Game by Name</h2>
+            <div class="form-group">
+                <input type="text" id="searchGameName" class="form-control" placeholder="Enter Game Name">
+            </div>
+            <button onclick="searchGameByName()" class="btn btn-primary">Search Game</button>
+        <div id="gameNameSearchResult"></div>
+        </div>
+    </div>
+    
+    <!-- Creative: Like a Game -->
+    <div class="card">
+        <div class="card-body">
+            <h2>Like a Game</h2>
+            <div class="form-group">
+                <label for="queryIDInput">Game QueryID:</label>
+                <input type="number" id="queryIDInput" class="form-control" placeholder="Enter Game QueryID">
+            </div>
+            <button onclick="likeGame()" class="btn btn-primary">Like</button>
+        </div>
+    </div>
+
+    <!-- Creative: Top Games by Genre -->
+    <div class="card">
+        <div class="card-body">
+            <h2>Top Games by Genre</h2>
+            <div class="form-group">
+                <input type="number" id="genreIDInput" class="form-control" placeholder="Enter Genre ID">
+            </div>
+            <button onclick="getTopGamesByGenre()" class="btn btn-primary">Get Top Games</button>
+            <canvas id="topGamesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Creative: Top Games at a price -->
+    <div class="card">
+        <div class="card-body">
+            <h2>Top Games by Price</h2>
+            <div class="form-group">
+                <input type="number" id="priceInput" class="form-control" placeholder="Enter Maximum Price">
+            </div>
+            <button onclick="getTopGamesByPrice()" class="btn btn-primary">Get Top Games</button>
+            <canvas id="priceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Adavanced: Assign Game Ratings -->
+    <div class="card">
+        <div class="card-body">
+            <h2>Assign Game Ratings</h2>
+            <button onclick="assignGameRatings()" class="btn btn-primary">Assign Ratings</button>
+            <div id="ratingsResult"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+        var topGamesChart = null;
+        var priceChart = null;
+
+        function getAllGames() {
+            fetch('/games')
+                .then(response => response.text()) 
+                .then(html => {
+            const gamesDiv = document.getElementById('allGamesResults');
+            gamesDiv.innerHTML = html; 
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('deleteGameForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            var gameId = document.getElementById('deleteGameId').value;
+            fetch('/delete-game', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json',},
+                body: JSON.stringify({ QueryID: gameId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+                document.getElementById('deleteGameForm').reset(); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting game');
+            });
+        });
+
+        function searchGameByQueryID() {
+            var queryID = document.getElementById('searchQueryID').value;
+            fetch(`/search-game?QueryID=${queryID}`)
+            .then(response => response.text()) 
+            .then(html => {
+                const resultDiv = document.getElementById('gameSearchResult');
+                resultDiv.innerHTML = html; 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = 'Error searching for game';
+            });
+        }
+        
+        document.getElementById('createGameForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            var formData = new FormData(this);
+            fetch('/game_data', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding game');
+            });
+        });
+
+        document.getElementById('updateGameForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            var formData = new FormData(this);
+            fetch('/update-game/' + formData.get('QueryID'), {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating game');
+            });
+        });
+
+        function searchGameByName() {
+            var gameName = document.getElementById('searchGameName').value;
+            fetch(`/search-game-by-name?name=${encodeURIComponent(gameName)}`)
+            .then(response => response.text()) 
+            .then(html => {
+                const resultDiv = document.getElementById('gameNameSearchResult');
+                resultDiv.innerHTML = html; 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = 'Error searching for game';
+            });
+        }
+
+        function getTopGamesByGenre() {
+            var genreID = document.getElementById('genreIDInput').value;
+            if (topGamesChart) topGamesChart.destroy();
+            fetch(`/top-games-by-genre?GenreID=${encodeURIComponent(genreID)}`)
+            .then(response => response.json())
+            .then(data => {
+                const gameNames = data.map(item => item.GameName);
+                const recommendations = data.map(item => item.Recommendation);
+                var ctx = document.getElementById('topGamesChart').getContext('2d');
+                topGamesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: gameNames,
+                        datasets: [{
+                            label: 'Recommendation',
+                            data: recommendations,
+                            backgroundColor: 'rgba(0, 100, 255, 0.5)',
+                            borderColor: 'rgba(100, 100, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function getTopGamesByPrice() {
+            var price = document.getElementById('priceInput').value;
+            if (priceChart) priceChart.destroy();
+            fetch(`/top-games-by-price?Price=${encodeURIComponent(price)}`)
+            .then(response => response.json())
+            .then(data => {
+                const gameNames = data.map(item => item.GameName);
+                const recommendations = data.map(item => item.Recommendation);
+                var ctx = document.getElementById('priceChart').getContext('2d');
+                priceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: gameNames,
+                        datasets: [{
+                            label: 'Recommendation',
+                            data: recommendations,
+                            backgroundColor: 'rgba(0, 100, 255, 0.5)',
+                            borderColor: 'rgba(100, 100, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function likeGame() {
+            var queryID = document.getElementById('queryIDInput').value;
+            fetch(`/like-game?QueryID=${encodeURIComponent(queryID)}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error liking the game');
+            });
+        }
+        function assignGameRatings() {
+            fetch('/assign-game-ratings', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                var html = '<table border="1"><tr><th>QueryID</th><th>Game Name</th><th>Recommendation</th><th>Rating</th></tr>';
+                data.forEach(row => {
+                    html += `<tr><td>${row.QueryID}</td><td>${row.GameName}</td><td>${row.Recommend}</td><td>${row.Rating}</td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById('ratingsResult').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('ratingsResult').innerHTML = 'Error assigning ratings';
+            });
+        }
+</script>
+
+</body>
+</html>
+<div>
+</body>
+</html>
